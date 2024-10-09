@@ -244,8 +244,6 @@ INSERT INTO post_hashtags (post_id, hashtag_id) VALUES
 
 -- QUERIES FOR DATA RETRIEVAL
 
-
-
 -- Get a user's profile information (username, bio, profile picture)
 
 select username, bio, profile_picture_url, created_at 
@@ -264,91 +262,6 @@ order by created_at desc;
 select count(follower_user_id) as total_followers 
 from followers 
 where user_id = 1;
-
---  Get the number of users a user is following
-
-select count(user_id) as total_following 
-from followers 
-where follower_user_id = 1;
-
--- Get the followers list for a user
-
-select u.username 
-from followers f
-join users u on f.follower_user_id = u.user_id
-where f.user_id = 1;
-
--- Get the list of users a user is following
-
-select u.username 
-from followers f
-join users u on f.user_id = u.user_id
-where f.follower_user_id = 1;
-
--- Get the posts a user has liked
-
-select p.post_id, p.caption, p.resource_link, p.created_at 
-from post_likes pl
-join posts p on pl.post_id = p.post_id
-where pl.liked_by_user_id = 1
-order by p.created_at desc;
-
--- Get all comments on a specific post
-
-select u.username, c.commented_text, c.commented_at 
-from comments c
-join users u on c.user_id = u.user_id
-where c.post_id = 1
-order by c.commented_at asc;
-
--- Get a user's story along with its views count
-
-select s.story_id, s.resource_link, s.caption, s.created_at, count(sv.viewer_user_id) as views_count
-from stories s
-left join story_views sv on s.story_id = sv.story_id
-where s.user_id = 1
-group by s.story_id, s.resource_link, s.caption, s.created_at;
-
---  Get the chat messages between two users
-
-select cl.message, cl.sent_at, u.username as sender 
-from chat_logs cl
-join users u on cl.sender_user_id = u.user_id
-where cl.chat_id = (select chat_id from chats where (user1_id = 1 and user2_id = 2) or (user1_id = 2 and user2_id = 1))
-order by cl.sent_at asc;
-
--- Get posts with a specific hashtag
-
-select p.post_id, p.caption, p.resource_link, p.created_at 
-from posts p
-join post_hashtags ph on p.post_id = ph.post_id
-join hashtags h on ph.hashtag_id = h.hashtag_id
-where h.hashtag_name = '#fun'
-order by p.created_at desc;
-
---  Get the users following a specific hashtag
-
-select u.username
-from user_hashtag_follows uhf
-join users u on uhf.user_id = u.user_id
-join hashtags h on uhf.hashtag_id = h.hashtag_id
-where h.hashtag_name = '#memories';
-
--- Get login session details of a user
-
-select session_token, login_ip, login_time, logout_time, is_active 
-from login_sessions 
-where user_id = 1 
-order by login_time desc;
-
--- Get the most recent posts from users a specific user is following (feed)
-
-select p.post_id, u.username, p.caption, p.resource_link, p.created_at
-from posts p
-join users u on p.user_id = u.user_id
-join followers f on p.user_id = f.user_id
-where f.follower_user_id = 1
-order by p.created_at desc;
 
 
 
