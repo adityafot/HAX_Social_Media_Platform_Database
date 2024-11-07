@@ -24,6 +24,7 @@ CREATE TABLE posts (
     user_id INT NOT NULL,
     caption TEXT,
     resource_link VARCHAR(255) NOT NULL,
+    hashtags JSON,  -- Store hashtags as a JSON array
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
@@ -85,28 +86,6 @@ CREATE TABLE chat_logs (
     FOREIGN KEY (sender_user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-CREATE TABLE hashtags (
-    hashtag_id INT AUTO_INCREMENT PRIMARY KEY,
-    hashtag_name VARCHAR(50) UNIQUE NOT NULL
-);
-
-CREATE TABLE user_hashtag_follows (
-    user_id INT NOT NULL,
-    hashtag_id INT NOT NULL,
-    followed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, hashtag_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (hashtag_id) REFERENCES hashtags(hashtag_id) ON DELETE CASCADE
-);
-
-CREATE TABLE post_hashtags (
-    post_id INT NOT NULL,
-    hashtag_id INT NOT NULL,
-    PRIMARY KEY (post_id, hashtag_id),
-    FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
-    FOREIGN KEY (hashtag_id) REFERENCES hashtags(hashtag_id) ON DELETE CASCADE
-);
-
 CREATE TABLE saved_posts (
     user_id INT NOT NULL,
     post_id INT NOT NULL,
@@ -124,4 +103,18 @@ CREATE TABLE notifications (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_read BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE hashtags (
+    hashtag_id INT AUTO_INCREMENT PRIMARY KEY,
+    hashtag_name VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE user_hashtag_follows (
+    user_id INT NOT NULL,
+    hashtag_id INT NOT NULL,
+    followed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, hashtag_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (hashtag_id) REFERENCES hashtags(hashtag_id) ON DELETE CASCADE
 );
