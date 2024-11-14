@@ -8,6 +8,7 @@ Team Members:
 3. Piyush Takrani
 4. Anubhav Pathania
 
+Final Working Backend Pushed -> By: Aditya Chauhan(005) CSE-A
 INSTAGRAM CLONE -> BACKEND COMPLETE [9.11.2024] -> By: Aditya Chauhan(005) CSE-A 
 Final Database Schema -> Aditya Chauhan (005)
 Updated Database Schema and queries -> Ashish Pal (015) and Piyush Takrani(010)
