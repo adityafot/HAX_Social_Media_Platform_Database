@@ -27,8 +27,9 @@ const Chat = connectDB.define('Chat', {
         onDelete: 'CASCADE',
     },
     started_at: {
-        type: DataTypes.TIMESTAMP,
-        defaultValue: Sequelize.NOW,
+        type: DataTypes.DATE,  // Use the correct Sequelize data type here
+        allowNull: false,
+        defaultValue: DataTypes.NOW 
     },
 }, {
     tableName: 'chats',

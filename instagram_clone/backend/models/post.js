@@ -1,7 +1,7 @@
-const {Sequelize, DataTypes} = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 const connectDB = require('../config/database');
-const User = require('./user')
-const Post = connectDB.define('Post',{
+
+const Post = connectDB.define('Post', {
     post_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -10,11 +10,6 @@ const Post = connectDB.define('Post',{
     user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-            model: User,       
-            key: 'user_id',
-        },
-        onDelete: 'CASCADE',   
     },
     caption: {
         type: DataTypes.TEXT,
@@ -22,25 +17,60 @@ const Post = connectDB.define('Post',{
     },
     resource_link: {
         type: DataTypes.STRING(255), 
-        allowNull: false,    
+        allowNull: true,   
+        defaultValue: "",
     },
     created_at: {
-        type: DataTypes.DATE,  // Use the correct Sequelize data type here
+        type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: DataTypes.NOW  // This automatically sets the current time
+        defaultValue: Sequelize.NOW
     },
-},   {
-        tableName: 'posts',         
-        timestamps: false,          
-});
-
-Post.hasMany(require('./postLike'), {
-    foreignKey: 'post_id',
-    onDelete: 'CASCADE',
-});
-Post.hasMany(require('./comment'), {
-    foreignKey: 'post_id',
-    onDelete: 'CASCADE',
+    likes_count: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    }
+}, {
+    tableName: 'posts',
+    timestamps: false,
 });
 
 module.exports = Post;
+
+// Lazily load other models and define associations in a function
+module.exports.initAssociations = () => {
+    const PostLike = require('./postLike');
+    const Comment = require('./comment');
+    const User = require('./user');
+    const savedPost = require('./savedPost')
+
+    // Define associations here
+    Post.hasMany(PostLike, {
+        foreignKey: 'post_id',
+        onDelete: 'CASCADE',
+    });
+
+    Post.hasMany(Comment, {
+        foreignKey: 'post_id',
+        onDelete: 'CASCADE',
+    });
+
+    Post.belongsToMany(User, {
+        through: PostLike,
+        as: 'likers',
+        foreignKey: 'post_id',
+        otherKey: 'liked_by_user_id'
+    });
+
+    Post.belongsTo(User, {
+        foreignKey: 'user_id',
+    });
+
+    Post.belongsToMany(User, {
+        through: savedPost,
+        as: 'savedBy',  // Alias for the saved users
+        foreignKey: 'post_id',
+        otherKey: 'user_id',
+    });
+};
+

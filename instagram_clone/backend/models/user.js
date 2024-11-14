@@ -1,5 +1,5 @@
-const {Sequelize, DataTypes} = require('sequelize');
-const connectDB = require('../config/database')
+const { Sequelize, DataTypes } = require('sequelize');
+const connectDB = require('../config/database');
 
 const User = connectDB.define('User', {
     user_id: {
@@ -19,14 +19,14 @@ const User = connectDB.define('User', {
     },
     bio: {
         type: DataTypes.STRING(255),
-        allowNull:true
+        allowNull: true
     },
     email: {
         type: DataTypes.STRING(255),
         unique: true,
         allowNull: false
     },
-    profile_picture_url :{
+    profile_picture_url: {
         type: DataTypes.STRING(255),
         allowNull: true
     },
@@ -35,18 +35,68 @@ const User = connectDB.define('User', {
         defaultValue: Sequelize.NOW
     }
 }, {
-        timestamps: false,
-        tableName: 'users'
+    timestamps: false,
+    tableName: 'users'
 });
-
-User.sync();
 
 module.exports = User;
 
+module.exports.initAssociations = () => {
+    const Post = require('./post');
+    const PostLike = require('./postLike');
+    const Story = require('./story')
+    const savedPost = require('./savedPost')
+    const Comment = require('./comment')
+    const Notification = require('./notification')
+    // Define associations here
+    User.hasMany(Post, {
+        foreignKey: 'user_id',
+        onDelete: 'CASCADE'
+    });
+    User.hasMany(Post, {
+        foreignKey: 'user_id',
+        onDelete: 'CASCADE'
+    });
 
-// const newUser = await User.create({
-//     username: 'mera_doe',
-//     password: 'hashedPassword', 
-//     bio: 'This is meri bio',
-//     profile_picture_url: 'http://meriprofile.com/profile.jpg'
-// });
+    User.belongsToMany(Post, {
+        through: PostLike,
+        as: 'likedPosts',
+        foreignKey: 'liked_by_user_id',
+        otherKey: 'post_id'
+    });
+
+    User.belongsToMany(User, {
+        as: 'following',
+        through: 'follower',
+        foreignKey: 'follower_user_id',
+        otherKey: 'user_id'
+    });
+
+    User.hasMany(Story, {
+        foreignKey: 'user_id', // The foreign key in the Story table that points to the User
+        onDelete: 'CASCADE',   // If the user is deleted, their stories will be deleted
+    });
+
+    User.hasMany(Notification, {
+        foreignKey: 'user_id', // The foreign key in the Story table that points to the User
+        onDelete: 'CASCADE',   // If the user is deleted, their stories will be deleted
+    });
+
+    User.belongsToMany(User, {
+        as: 'followers',
+        through: 'follower',
+        foreignKey: 'user_id',
+        otherKey: 'follower_user_id'
+    });
+    User.belongsToMany(Post, {
+        through: savedPost,
+        as: 'savedPosts',  // Alias for saved posts
+        foreignKey: 'user_id',
+        otherKey: 'post_id',
+    });
+    User.hasMany(Comment, {
+        foreignKey: 'user_id',
+        onDelete: 'CASCADE'
+    });
+    
+};

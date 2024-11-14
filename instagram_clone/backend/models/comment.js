@@ -42,3 +42,10 @@ const Comment = connectDB.define('Comment', {
 });
 
 module.exports = Comment;
+
+module.exports.initAssociations = () => {
+    const User = require('./user')
+    Comment.belongsTo(User, {
+        foreignKey: 'user_id'
+    });
+}

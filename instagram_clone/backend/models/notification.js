@@ -18,7 +18,7 @@ const Notification = connectDB.define('Notification', {
         onDelete: 'CASCADE',
     },
     type: {
-        type: DataTypes.ENUM('like', 'comment', 'follow', 'tag'),
+        type: DataTypes.ENUM('like', 'comment', 'follow'),
         allowNull: false,
     },
     reference_id: {
@@ -26,16 +26,24 @@ const Notification = connectDB.define('Notification', {
         allowNull: true,
     },
     created_at: {
-        type: DataTypes.TIMESTAMP,
-        defaultValue: Sequelize.NOW,
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW
     },
-    is_read: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-    },
+    // is_read: {
+    //     type: DataTypes.BOOLEAN,
+    //     defaultValue: false,
+    // },
 }, {
     tableName: 'notifications',
     timestamps: false,
 });
 
 module.exports = Notification;
+
+module.exports.initAssociations = () => {
+    const User = require('./user')
+    Notification.belongsTo(User, {
+        foreignKey: 'user_id'
+    });
+}

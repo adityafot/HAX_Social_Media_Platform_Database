@@ -1,6 +1,7 @@
-const {Sequelize, DataTypes} = require('sequelize');
-const connectDB = require('../config/database')
-const User = require('./user')
+const { Sequelize, DataTypes } = require('sequelize');
+const connectDB = require('../config/database');
+const User = require('./user');
+
 const Follower = connectDB.define('Follower', {
     user_id: {
         type: DataTypes.INTEGER,
@@ -11,7 +12,7 @@ const Follower = connectDB.define('Follower', {
             key: 'user_id'
         },
         onDelete: 'CASCADE'
-    }, 
+    },
     follower_user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -24,26 +25,18 @@ const Follower = connectDB.define('Follower', {
     followed_at: {
         type: DataTypes.DATE,
         defaultValue: Sequelize.NOW,
-    }
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.NOW,
+    },
+    updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.NOW,
+    },
 }, {
-    tableName: 'followers',
+    tableName: 'follower',
     timestamps: false
-})
+});
 
 module.exports = Follower;
-
-const Follower = require('../models/followers');
-
-// Example function to follow a user
-// async function followUser(userId, followerUserId) {
-//     try {
-//         const follow = await Follower.create({
-//             user_id: userId,
-//             follower_user_id: followerUserId,
-//         });
-//         return follow;
-//     } catch (error) {
-//         console.error('Error following user:', error);
-//         throw error;
-//     }
-// }

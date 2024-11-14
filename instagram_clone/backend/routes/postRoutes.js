@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { createPost, getPostsByUser, getAllPosts, getPostById, updatePost, deletePost, likePost, savePost } = require('../controllers/postController');
-const uploadToCloudinaryMiddleware = require('../middlewares/multer'); // Middleware for file upload
+const { uploadToCloudinaryMiddleware, upload } = require('../middlewares/multer'); // Middleware for file upload
+const authenticateJWT = require('../middlewares/authMiddleware');
 
 // Create a new post
-router.post('/create', uploadToCloudinaryMiddleware, createPost);
+router.post('/create', authenticateJWT, upload, createPost, uploadToCloudinaryMiddleware);
 
 // Get all posts of a specific user
 router.get('/user', getPostsByUser);
@@ -16,7 +17,7 @@ router.get('/', getAllPosts);
 router.get('/:postId', getPostById);
 
 // Update a post
-router.put('/update/:postId', uploadToCloudinaryMiddleware, updatePost);
+router.put('/update/:postId', authenticateJWT, uploadToCloudinaryMiddleware);
 
 // Delete a post
 router.delete('/delete/:postId', deletePost);

@@ -4,11 +4,12 @@ const Post = require('../models/post');
 const User = require('../models/user');
 const Comment = require('../models/comment');
 const uploadToCloudinaryMiddleware = require('../middlewares/multer');  // Cloudinary upload middleware
+const { createNotification } = require('./notificationController');
 
 // Create a new comment on a post
 const createComment = async (req, res) => {
     const { post_id, commented_text } = req.body;
-    const user_id = req.user.user_id; // Assuming you're using JWT for authentication and user info is attached to req.user
+    const user_id = req.user.userId; // Assuming you're using JWT for authentication and user info is attached to req.user
     
     try {
         // Check if the post exists
@@ -23,20 +24,22 @@ const createComment = async (req, res) => {
             const extractedErrors = errors.array().map(err => ({ [err.param]: err.msg }));
             return res.status(400).json({ errors: extractedErrors });
         }
-
+        
         // Handle file upload if there's a file
-        let fileUrl = null;
-        if (req.fileUrl) {
-            fileUrl = req.fileUrl; // Cloudinary URL
-        }
+        // let fileUrl = null;
+        // if (req.fileUrl) {
+        //     fileUrl = req.fileUrl; // Cloudinary URL
+        // }
 
         // Create a new comment
         const newComment = await Comment.create({
             post_id,
             user_id,
             commented_text,
-            media_url: fileUrl  // Store media URL if file uploaded
+            // media_url: fileUrl  // Store media URL if file uploaded
         });
+
+        await createNotification(post.user_id, "comment");
 
         return res.status(201).json({
             message: 'Comment created successfully',
@@ -54,6 +57,7 @@ const getCommentsByPost = async (req, res) => {
 
     try {
         // Check if the post exists
+        console.log(post_id);
         const post = await Post.findByPk(post_id);
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
@@ -62,10 +66,10 @@ const getCommentsByPost = async (req, res) => {
         // Fetch all comments for the post
         const comments = await Comment.findAll({
             where: { post_id },
-            include: {
-                model: User,
-                attributes: ['user_id', 'username', 'profile_picture_url'] // Include user info
-            }
+            // include: {
+            //     model: User,
+            //     attributes: ['user_id', 'username', 'profile_picture_url'] // Include user info
+            // }
         });
 
         return res.status(200).json({ comments });
@@ -76,38 +80,38 @@ const getCommentsByPost = async (req, res) => {
 };
 
 // Update a comment
-const updateComment = async (req, res) => {
-    const { comment_id } = req.params;
-    const { commented_text } = req.body;
-    const user_id = req.user.user_id;
+// const updateComment = async (req, res) => {
+//     const { comment_id } = req.params;
+//     const { commented_text } = req.body;
+//     const user_id = req.user.userId;
 
-    try {
-        // Find the comment by ID
-        const comment = await Comment.findByPk(comment_id);
-        if (!comment) {
-            return res.status(404).json({ message: 'Comment not found' });
-        }
+//     try {
+//         // Find the comment by ID
+//         const comment = await Comment.findByPk(comment_id);
+//         if (!comment) {
+//             return res.status(404).json({ message: 'Comment not found' });
+//         }
 
-        // Ensure the comment belongs to the authenticated user
-        if (comment.user_id !== user_id) {
-            return res.status(403).json({ message: 'You are not authorized to update this comment' });
-        }
+//         // Ensure the comment belongs to the authenticated user
+//         if (comment.user_id !== user_id) {
+//             return res.status(403).json({ message: 'You are not authorized to update this comment' });
+//         }
 
-        // Update the comment
-        comment.commented_text = commented_text;
-        await comment.save();
+//         // Update the comment
+//         comment.commented_text = commented_text;
+//         await comment.save();
 
-        return res.status(200).json({ message: 'Comment updated successfully', comment });
-    } catch (error) {
-        console.error('Error updating comment:', error);
-        return res.status(500).json({ message: 'Error updating comment', error: error.message });
-    }
-};
+//         return res.status(200).json({ message: 'Comment updated successfully', comment });
+//     } catch (error) {
+//         console.error('Error updating comment:', error);
+//         return res.status(500).json({ message: 'Error updating comment', error: error.message });
+//     }
+// };
 
 // Delete a comment
 const deleteComment = async (req, res) => {
     const { comment_id } = req.params;
-    const user_id = req.user.user_id;
+    const user_id = req.user.userId;
 
     try {
         // Find the comment by ID
@@ -134,6 +138,6 @@ const deleteComment = async (req, res) => {
 module.exports = {
     createComment,
     getCommentsByPost,
-    updateComment,
+    // updateComment,
     deleteComment
 };

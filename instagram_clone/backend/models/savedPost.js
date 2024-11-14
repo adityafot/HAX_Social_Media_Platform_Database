@@ -4,31 +4,27 @@ const Post = require('./post');
 const User = require('./user');
 
 const SavedPost = connectDB.define('SavedPost', {
-    user_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: User,     
-            key: 'user_id',
-        },
-        onDelete: 'CASCADE',
+  post_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    references: {
+      model: Post,
+      key: 'post_id',
     },
-    post_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: Post,    
-            key: 'post_id',
-        },
-        onDelete: 'CASCADE',
+    onDelete: 'CASCADE',
+  },
+  user_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    references: {
+      model: User,
+      key: 'user_id',
     },
-    saved_at: {
-        type: DataTypes.TIMESTAMP,
-        defaultValue: Sequelize.NOW,
-    },
+    onDelete: 'CASCADE',
+  },
 }, {
-    tableName: 'saved_posts',
-    timestamps: false,
+  tableName: 'saved_posts',
+  timestamps: false,
 });
 
 module.exports = SavedPost;

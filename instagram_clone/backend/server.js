@@ -8,8 +8,9 @@ const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
 const storyRoutes = require('./routes/storyRoutes');
 const commentRoutes = require('./routes/commentRoutes');
+const authenticateJWT = require('./middlewares/authMiddleware')
 const Sequelize = require('sequelize');
-
+const chatRoutes = require('./routes/chatRoutes')
 dotenv.config();
 
 const app = express();
@@ -27,11 +28,11 @@ app.use(express.json()); // To parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // To handle form submissions
 
 // Routes
-app.use('/api/posts', postRoutes); // Post routes
-app.use('/api/stories', storyRoutes); // Story routes
+app.use('/api/posts',authenticateJWT, postRoutes); // Post routes
+app.use('/api/stories',authenticateJWT, storyRoutes); // Story routes
 app.use('/api/users', userRoutes); // User-related routes
 app.use('/api/comments', commentRoutes); // Comment-related routes
-
+app.use('/api/chats', chatRoutes);
 // Default route
 app.get('/', (req, res) => {
     res.status(200).send('Hello, World!');

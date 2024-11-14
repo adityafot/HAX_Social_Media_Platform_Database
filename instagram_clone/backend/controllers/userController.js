@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Unauthorized, BadRequest, NotFound } = require('http-errors');
 const User = require('../models/user');
+const Follower = require('../models/follower')
+const {createNotification} = require("./notificationController")
 
 // Register new user
 const registerUser = async (req, res, next) => {
@@ -60,14 +62,23 @@ const loginUser = async (req, res, next) => {
             expiresIn: '1h'
         });
 
+        // Set the token as an HTTP-only cookie
+        res.cookie('token', token, {
+            httpOnly: true,    // Prevents client-side access
+            secure: process.env.NODE_ENV === 'production', // Set to true in production
+            maxAge: 3600000    // 1 hour in milliseconds
+        });
+
         res.status(200).json({
+            userId: user.user_id,
             message: 'Login successful!',
-            token: token
+            token: token // Optionally send the token in JSON if needed
         });
     } catch (error) {
         next(error);
     }
 };
+
 
 // Get user info
 const getUserInfo = async (req, res, next) => {
@@ -145,6 +156,35 @@ const logoutUser = (req, res) => {
     res.clearCookie('token');
     res.status(200).json({ message: 'Logged out successfully' });
 };
+ 
+const followUser = async (req, res, next) => {
+    try {
+      const { userId } = req.params;
+    //   console.log(req.user);
+      const followerId  = req.user.userId;
+  
+      if (userId === followerId) {
+        return res.status(400).json({ message: "Can't follow yourself." });
+      }
+  
+      const existingFollow = await Follower.findOne({
+        where: { user_id: userId, follower_user_id: followerId },
+      });
+  
+      if (existingFollow) {
+        // Unfollow
+        await existingFollow.destroy();
+        return res.status(200).json({ message: "Unfollowed successfully." });
+      }
+  
+      // Follow
+      await Follower.create({ user_id: userId, follower_user_id: followerId });
+      await createNotification(userId, "follow");
+      return res.status(200).json({ message: "Followed successfully." });
+    } catch (error) {
+      next(error);
+    }
+  };
 
 module.exports = {
     registerUser,
@@ -152,5 +192,6 @@ module.exports = {
     logoutUser,
     getUserInfo,
     updateUserInfo,
-    deleteUser
+    deleteUser,
+    followUser
 };

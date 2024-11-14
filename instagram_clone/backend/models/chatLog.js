@@ -32,7 +32,7 @@ const ChatLog = connectDB.define('ChatLog', {
         allowNull: false,
     },
     sent_at: {
-        type: DataTypes.TIMESTAMP,
+        type: DataTypes.DATE,
         defaultValue: Sequelize.NOW,
     },
 }, {

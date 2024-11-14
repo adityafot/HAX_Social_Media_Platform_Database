@@ -19,7 +19,8 @@ const Story = connectDB.define('Story', {
     },
     resource_link: {
         type: DataTypes.STRING(255),
-        allowNull: false,  
+        allowNull: true,  
+        defaultValue : "",
     },
     caption: {
         type: DataTypes.TEXT,
@@ -41,3 +42,10 @@ const Story = connectDB.define('Story', {
 });
 
 module.exports = Story;
+
+module.exports.initAssociations = () => {
+    const User = require('./user')
+    Story.belongsTo(User, {
+        foreignKey: 'user_id', // Each story belongs to one user
+    });
+}

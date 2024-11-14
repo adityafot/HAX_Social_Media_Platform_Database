@@ -1,48 +1,61 @@
-const { User } = require('../models/user');  // Import Sequelize models
-const { Post } = require('../models/post');  // Import Sequelize models
-const { Story } = require('../models/story');  // Import Sequelize models
+const User = require('../models/user');
+const Post = require('../models/post');
+const Story = require('../models/story');
 
-// Function to store URL in the relevant table (user, post, story)
 const storeUrl = async (url, modelType, modelId) => {
     try {
+        // Input validation
         if (!url || !modelType || !modelId) {
             throw new Error('Missing required parameters: URL, model type, or model ID');
         }
 
+        console.log(`Storing URL for modelType: ${modelType}, modelId: ${modelId}`);
+
         let updateResult;
-        switch (modelType) {
+        switch (modelType.toLowerCase()) {
             case 'profile':
-                // Update user's profile picture URL
-                updateResult = await User.update({ profile_picture_url: url }, {
-                    where: { user_id: modelId }
-                });
+                if (!User) throw new Error('User model not found');
+                updateResult = await User.update(
+                    { profile_picture_url: url },
+                    { where: { user_id: modelId } }
+                );
                 break;
+
             case 'post':
-                // Update post's resource link (for image or video)
-                updateResult = await Post.update({ resource_link: url }, {
-                    where: { post_id: modelId }
-                });
+                if (!Post) throw new Error('Post model not found');
+                updateResult = await Post.update(
+                    { resource_link: url },
+                    { where: { post_id: modelId } }
+                );
                 break;
+
             case 'story':
-                // Update story's resource link (for image or video)
-                updateResult = await Story.update({ resource_link: url }, {
-                    where: { story_id: modelId }
-                });
+                if (!Story) throw new Error('Story model not found');
+                updateResult = await Story.update(
+                    { resource_link: url },
+                    { where: { story_id: modelId } }
+                );
                 break;
+
             default:
-                throw new Error('Invalid model type provided');
+                throw new Error(`Invalid model type provided: ${modelType}`);
         }
 
+        // Check if any rows were affected by the update
         if (updateResult[0] === 0) {
-            throw new Error(`${modelType.charAt(0).toUpperCase() + modelType.slice(1)} not found for the given ID.`);
+            throw new Error(`${modelType.charAt(0).toUpperCase() + modelType.slice(1)} not found with ID: ${modelId}`);
         }
+
+        console.log(`${modelType.charAt(0).toUpperCase() + modelType.slice(1)} updated successfully with URL: ${url}`);
 
         return {
+            success: true,
             message: `${modelType.charAt(0).toUpperCase() + modelType.slice(1)} updated successfully`,
             url
         };
 
     } catch (error) {
+        console.error(`Error storing URL: ${error.message}`);
         throw new Error(`Error storing URL: ${error.message}`);
     }
 };
