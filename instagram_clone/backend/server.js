@@ -38,13 +38,12 @@ app.get('/', (req, res) => {
     res.status(200).send('Hello, World!');
 });
 
-// Error handling middleware should be placed after all routes
 app.use(errorHandler); // This should handle errors thrown by your controllers
 
 // Start server
 app.listen(PORT, async () => {
     try {
-        await connectDB.authenticate(); // Test the database connection
+        await connectDB.authenticate(); 
         console.log('Database connection established successfully');
         console.log(`Server has started on PORT: ${PORT}`);
     } catch (error) {

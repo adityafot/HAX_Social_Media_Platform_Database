@@ -22,7 +22,7 @@ const Notification = connectDB.define('Notification', {
         allowNull: false,
     },
     reference_id: {
-        type: DataTypes.INTEGER,  // Optional reference ID for specific notification details
+        type: DataTypes.INTEGER, 
         allowNull: true,
     },
     created_at: {

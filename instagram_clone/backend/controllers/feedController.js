@@ -1,7 +1,7 @@
 const { Op } = require('sequelize');
 const Post = require('../models/post');
 const User = require('../models/user');
-const Follower = require('../models/follower'); // Add Follower model
+const Follower = require('../models/follower');
 const sequelize = require('../config/database');
 
 const getUserFeed = async (req, res, next) => {
@@ -36,7 +36,6 @@ const getUserFeed = async (req, res, next) => {
       },
       order: [
         ['likes_count', 'DESC'],
-        // ['comments_count', 'DESC']
       ],
       limit: pageSize,
       offset: (page - 1) * pageSize,
@@ -63,7 +62,6 @@ const getUserFeed = async (req, res, next) => {
       post_id: post.post_id,
       user_id: post.user_id,
       username: userMap[post.user_id],
-    //   profile_picture_url: post.User.profile_picture_url,
       caption: post.caption,
       image_url: post.image_url,
       created_at: post.created_at,

@@ -6,10 +6,9 @@ const dataUri = require('../utils/datauri');
 const uploadToCloudinary = require('../utils/cloudinary');
 // const uploadToCloudinaryMiddleware = require('../middlewares/multer');
 
-// Create a new story
 const createStory = async (req, res) => {
     const { caption } = req.body;
-    const user_id = req.user.userId; // Assuming you're using JWT for authentication
+    const user_id = req.user.userId; 
 
     // if (!req.fileUrl) {
     //     return res.status(400).json({ message: 'No file URL available' });
@@ -22,21 +21,18 @@ const createStory = async (req, res) => {
     const file = dataUri(req.file);
 
     try {
-        // Step 1: Upload the file to Cloudinary
         const result = await uploadToCloudinary(file);
         if (!result || !result.secure_url) {
             console.error('Error: Cloudinary upload failed');
             return res.status(500).json({ message: 'Cloudinary upload failed' });
         }
 
-        // Step 2: Create a new story with the Cloudinary URL
         const newStory = await Story.create({
             user_id,
             resource_link: result.secure_url,  // Use Cloudinary URL here
             caption
         });
 
-        // Step 3: Update the newly created story with the Cloudinary URL if needed
         const updateResult = await Story.update(
             { resource_link: result.secure_url },
             { where: { story_id: newStory.story_id } }
@@ -58,11 +54,11 @@ const createStory = async (req, res) => {
 };
 
 const getStoryByUser = async (req, res) => {
-    const { user_id } = req.params; // Access user_id from req.params
+    const { user_id } = req.params;
 
     try {
         const stories = await Story.findAll({
-            where: { user_id: parseInt(user_id) } // Convert user_id to integer
+            where: { user_id: parseInt(user_id) }
         });
 
         if (!stories.length) {
@@ -75,12 +71,10 @@ const getStoryByUser = async (req, res) => {
         return res.status(500).json({ message: 'Error fetching stories' });
     }
 };
-// Get all stories for the authenticated user
-const getStories = async (req, res) => {
-    const user_id = req.user.userId; // Assuming you're using JWT for authentication
 
+const getStories = async (req, res) => {
+    const user_id = req.user.userId;
     try {
-        // Fetch all stories for the authenticated user
         
         const stories = await Story.findAll({
             // where: { user_id },
@@ -97,12 +91,10 @@ const getStories = async (req, res) => {
     }
 };
 
-// Get a single story by its ID
 const getStoryById = async (req, res) => {
     const { storyId } = req.params;
 
     try {
-        // Find the story by its ID
         console.log('Fetching story with ID:', storyId);
         const story = await Story.findByPk(storyId
         //     , {
@@ -117,7 +109,6 @@ const getStoryById = async (req, res) => {
             return res.status(404).json({ message: 'Story not found' });
         }
 
-        // Track the view if the viewer is authenticated
         // if (req.user) {
         //     const viewerUserId = req.user.user_id;
         //     const existingView = await StoryView.findOne({
@@ -145,7 +136,7 @@ const getStoryById = async (req, res) => {
 // Delete a story
 const deleteStory = async (req, res) => {
     const { storyId } = req.params;
-    const user_id = req.user.userId; // Assuming you're using JWT for authentication
+    const user_id = req.user.userId;
 
     try {
         // Find the story by its ID

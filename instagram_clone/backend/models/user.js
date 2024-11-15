@@ -73,13 +73,13 @@ module.exports.initAssociations = () => {
     });
 
     User.hasMany(Story, {
-        foreignKey: 'user_id', // The foreign key in the Story table that points to the User
-        onDelete: 'CASCADE',   // If the user is deleted, their stories will be deleted
+        foreignKey: 'user_id', 
+        onDelete: 'CASCADE',  
     });
 
     User.hasMany(Notification, {
-        foreignKey: 'user_id', // The foreign key in the Story table that points to the User
-        onDelete: 'CASCADE',   // If the user is deleted, their stories will be deleted
+        foreignKey: 'user_id',
+        onDelete: 'CASCADE',  
     });
 
     User.belongsToMany(User, {
@@ -90,7 +90,7 @@ module.exports.initAssociations = () => {
     });
     User.belongsToMany(Post, {
         through: savedPost,
-        as: 'savedPosts',  // Alias for saved posts
+        as: 'savedPosts', 
         foreignKey: 'user_id',
         otherKey: 'post_id',
     });

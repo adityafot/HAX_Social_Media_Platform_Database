@@ -1,13 +1,11 @@
 const Notification = require('../models/notification');
 const User = require('../models/user');
 
-// Create a new notification
 const createNotification = async (userId, type, referenceId = null) => {
     try {
         const notification = await Notification.create({
             user_id: userId,
             type: type,
-            // reference_id: referenceId,
         });
         console.log('Created notification:', notification);
         await notification.save();
@@ -18,10 +16,9 @@ const createNotification = async (userId, type, referenceId = null) => {
     }
 };
 
-// Get all notifications for a user
 const getNotifications = async (req, res) => {
     const { user_id } = req.params;
-    const userId = parseInt(user_id, 10);  // Convert the user_id to an integer
+    const userId = parseInt(user_id, 10); 
 
     try {
         console.log('Fetching notifications for user:', userId);

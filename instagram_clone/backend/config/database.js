@@ -16,21 +16,18 @@ const connectDB = new Sequelize({
         acquire: 30000,
         idle: 10000
     },
-    // Add these options for better control over table creation
     define: {
         charset: 'utf8mb4',
         collate: 'utf8mb4_unicode_ci',
-        timestamps: true, // Enable timestamps by default
-        underscored: true, // Use snake_case rather than camelCase for fields
+        timestamps: true,
+        underscored: true,
     },
     sync: {
-        // Enable table creation
-        force: false, // WARNING: setting this to true will drop existing tables
-        alter: true, // This will alter existing tables to match your models
+        force: false,
+        alter: true,
     }
 });
 
-// Test the connection to ensure everything is set up properly
 const testConnection = async () => {
     try {
         await connectDB.authenticate();

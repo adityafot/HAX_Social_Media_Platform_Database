@@ -62,17 +62,16 @@ const loginUser = async (req, res, next) => {
             expiresIn: '1h'
         });
 
-        // Set the token as an HTTP-only cookie
         res.cookie('token', token, {
-            httpOnly: true,    // Prevents client-side access
+            httpOnly: true, 
             secure: process.env.NODE_ENV === 'production', // Set to true in production
-            maxAge: 3600000    // 1 hour in milliseconds
+            maxAge: 3600000 
         });
 
         res.status(200).json({
             userId: user.user_id,
             message: 'Login successful!',
-            token: token // Optionally send the token in JSON if needed
+            token: token 
         });
     } catch (error) {
         next(error);

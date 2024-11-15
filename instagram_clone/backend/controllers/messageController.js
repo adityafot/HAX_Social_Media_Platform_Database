@@ -1,19 +1,16 @@
 const ChatLog = require('../models/chatLog');
 const Chat = require('../models/chat');
 
-// Send a message in a chat
 const sendMessage = async (req, res) => {
     const { chat_id } = req.params;
     const {  message } = req.body;
     const sender_user_id = req.user.userId;
     try {
-        // Ensure the chat exists
         const chat = await Chat.findByPk(chat_id);
         if (!chat) {
             return res.status(404).json({ message: 'Chat not found' });
         }
 
-        // Create the message in ChatLog
         const newMessage = await ChatLog.create({
             chat_id,
             sender_user_id,
@@ -27,7 +24,6 @@ const sendMessage = async (req, res) => {
     }
 };
 
-// Get all messages for a specific chat
 const getChatMessages = async (req, res) => {
     const { chat_id } = req.params;
 

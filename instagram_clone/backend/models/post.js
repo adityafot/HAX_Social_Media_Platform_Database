@@ -44,7 +44,6 @@ module.exports.initAssociations = () => {
     const User = require('./user');
     const savedPost = require('./savedPost')
 
-    // Define associations here
     Post.hasMany(PostLike, {
         foreignKey: 'post_id',
         onDelete: 'CASCADE',
@@ -68,7 +67,7 @@ module.exports.initAssociations = () => {
 
     Post.belongsToMany(User, {
         through: savedPost,
-        as: 'savedBy',  // Alias for the saved users
+        as: 'savedBy', 
         foreignKey: 'post_id',
         otherKey: 'user_id',
     });

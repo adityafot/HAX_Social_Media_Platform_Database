@@ -28,9 +28,9 @@ const StoryView = connectDB.define('StoryView', {
         onDelete: 'CASCADE',
     },
     viewed_at: {
-        type: DataTypes.DATE,  // Use the correct Sequelize data type here
+        type: DataTypes.DATE, 
         allowNull: false,
-        defaultValue: DataTypes.NOW  // This automatically sets the current time
+        defaultValue: DataTypes.NOW 
     },
 }, {
     tableName: 'story_views',

@@ -10,7 +10,6 @@ const createPost = async (req, res, next) => {
     const { userId } = req.user;
     const { caption, hashtags } = req.body;
 
-    // Step 1: Create the post without an image URL
     const newPost = await Post.create({
       user_id: userId,
       caption: caption || "",
@@ -18,7 +17,6 @@ const createPost = async (req, res, next) => {
       hashtags: hashtags || [],
     });
     req.post_id = newPost.post_id;
-    // Step 2: Pass post_id to the middleware if a file is present
     // if (req.file) {
     //     req.file.modelId = newPost.post_id; // Pass post_id to the middleware
     //     next(); // Move to uploadToCloudinaryMiddleware
@@ -40,10 +38,9 @@ const createPost = async (req, res, next) => {
 const updatePost = async (req, res, next) => {
   try {
     const { postId } = req.params;
-    const { caption, hashtags } = req.body; // No need to extract modelId, modelType here if they're not used in update
+    const { caption, hashtags } = req.body; 
     const { userId } = req.user;
 
-    // Find the post to be updated by its ID and userId to ensure it's the right post
     const post = await Post.findOne({
       where: { post_id: postId, user_id: userId },
     });
@@ -57,40 +54,33 @@ const updatePost = async (req, res, next) => {
         });
     }
 
-    // Update post details without the image (for now)
-    post.caption = caption || post.caption; // Update caption if provided, else keep existing
-    post.hashtags = hashtags || post.hashtags; // Same for hashtags
+    post.caption = caption || post.caption; 
+    post.hashtags = hashtags || post.hashtags;
 
-    // Save the post first with text fields
     await post.save();
 
-    // If there is a file uploaded, upload it to Cloudinary and get the URL
     if (req.file) {
-      const file = dataUri(req.file); // Convert file to Data URI
-      const result = await uploadToCloudinary(file); // Upload to Cloudinary
+      const file = dataUri(req.file);
+      const result = await uploadToCloudinary(file);
 
-      // If Cloudinary upload fails, throw an error
       if (!result || !result.secure_url) {
         return res.status(500).json({ message: "Cloudinary upload failed" });
       }
 
-      // Update the post with Cloudinary URL (resource_url)
       post.resource_url = result.secure_url;
-      await post.save(); // Save again with the updated image URL
+      await post.save();
     }
 
-    // Send success response
     res.status(200).json({
       message: "Post updated successfully.",
       post,
     });
   } catch (error) {
     console.error(error);
-    next(error); // Pass error to next middleware (e.g., error handler)
+    next(error);
   }
 };
 
-// Controller for fetching all posts by a specific user
 const getPostsByUser = async (req, res, next) => {
   try {
     const { userId } = req.user;
@@ -110,7 +100,6 @@ const getPostsByUser = async (req, res, next) => {
   }
 };
 
-// Controller for fetching all posts
 const getAllPosts = async (req, res, next) => {
   try {
     const posts = await Post.findAll({
@@ -127,7 +116,6 @@ const getAllPosts = async (req, res, next) => {
   }
 };
 
-// Controller for fetching a single post by ID
 const getPostById = async (req, res, next) => {
   try {
     const { postId } = req.params;
@@ -144,7 +132,6 @@ const getPostById = async (req, res, next) => {
   }
 };
 
-// Controller for deleting a post
 const deletePost = async (req, res, next) => {
   try {
     const { postId } = req.params;

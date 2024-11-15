@@ -27,14 +27,14 @@ const Story = connectDB.define('Story', {
         allowNull: true,  
     },
     created_at: {
-        type: DataTypes.DATE,  // Use the correct Sequelize data type here
+        type: DataTypes.DATE,  
         allowNull: false,
-        defaultValue: DataTypes.NOW  // This automatically sets the current time
+        defaultValue: DataTypes.NOW 
     },
     created_at: {
-        type: DataTypes.DATE,  // Use the correct Sequelize data type here
+        type: DataTypes.DATE, 
         allowNull: false,
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP + INTERVAL 24 HOUR"),  // This automatically sets the current time
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP + INTERVAL 24 HOUR"), 
     },
 }, {
     tableName: 'stories',

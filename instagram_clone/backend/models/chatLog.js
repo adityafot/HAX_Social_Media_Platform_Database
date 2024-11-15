@@ -13,7 +13,7 @@ const ChatLog = connectDB.define('ChatLog', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Chat,       // Foreign key to Chat model
+            model: Chat,     
             key: 'chat_id',
         },
         onDelete: 'CASCADE',
@@ -22,7 +22,7 @@ const ChatLog = connectDB.define('ChatLog', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: User,       // Foreign key to User model
+            model: User,      
             key: 'user_id',
         },
         onDelete: 'CASCADE',
