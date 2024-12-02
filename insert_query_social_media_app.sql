@@ -54,20 +54,6 @@ INSERT INTO story_views (story_id, viewer_user_id) VALUES
 (3, 4), -- Anubhav viewed Aditya's story
 (4, 1); -- Ashish viewed Anubhav's story
 
--- Inserting into Highlights Table
-INSERT INTO highlights (user_id, highlight_name) VALUES
-(1, 'Ashish\'s Best Moments'),
-(2, 'Piyush\'s Internship Journey'),
-(3, 'Aditya\'s Robotics'),
-(4, 'Anubhav\'s AI Projects');
-
--- Inserting into Highlight Stories Table
-INSERT INTO highlight_stories (highlight_id, story_id) VALUES
-(1, 1), -- Ashish's story in his highlights
-(2, 2), -- Piyush's story in his highlights
-(3, 3), -- Aditya's story in his highlights
-(4, 4); -- Anubhav's story in his highlights
-
 -- Inserting into Chats Table
 INSERT INTO chats (user1_id, user2_id) VALUES
 (1, 2), -- Chat between Ashish and Piyush
@@ -80,27 +66,3 @@ INSERT INTO chat_logs (chat_id, sender_user_id, message_text) VALUES
 (2, 3, 'Anubhav, let\'s discuss the new robotics project.'),
 (2, 4, 'Absolutely! Excited to work on it.');
 
--- Inserting into Login Sessions Table
-INSERT INTO login_sessions (user_id, session_token, login_ip, is_active) VALUES
-(1, 'token_ashish', '192.168.1.1', TRUE),
-(2, 'token_piyush', '192.168.1.2', TRUE),
-(3, 'token_aditya', '192.168.1.3', TRUE),
-(4, 'token_anubhav', '192.168.1.4', TRUE);
-
--- Inserting into Hashtags Table
-INSERT INTO hashtags (hashtag_name) VALUES
-('#AI', '#Robotics', '#Coding', '#Internship');
-
--- Inserting into User Hashtag Follows Table
-INSERT INTO user_hashtag_follows (user_id, hashtag_id) VALUES
-(1, 1), -- Ashish follows #AI
-(2, 4), -- Piyush follows #Internship
-(3, 2), -- Aditya follows #Robotics
-(4, 1); -- Anubhav follows #AI
-
--- Inserting into Post Hashtags Table
-INSERT INTO post_hashtags (post_id, hashtag_id) VALUES
-(1, 1), -- Ashish's post is tagged with #AI
-(3, 2), -- Aditya's post is tagged with #Robotics
-(2, 4), -- Piyush's post is tagged with #Internship
-(4, 1); -- Anubhav's post is tagged with #AI
